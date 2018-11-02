@@ -36,7 +36,7 @@ export class FetchCalendarServiceProvider {
       {responseType: 'text'})
       .subscribe(data => {
         this.caldata = FetchCalendarServiceProvider.convert(data)["VCALENDAR"][0]["VEVENT"];
-        // TODO: nameをキーとして重複無しで取り出す
+        //nameをキーとして重複無しで取り出す
         /*let lectures = this.caldata.filter((v1,i1,a1) => {
           return (a1.findIndex(v2 => {
             return (v1.SUMMARY===v2.SUMMARY)
@@ -51,8 +51,7 @@ export class FetchCalendarServiceProvider {
 
         console.log(this.caldata);
 
-
-        // TODO: {name, datetime[]} という感じのリストを作る
+        //{name, datetime[]} という感じのリストを作る
         for(let i = 0; i < this.caldata.length;){
           //console.log(this.caldata[i]);
 
@@ -63,7 +62,7 @@ export class FetchCalendarServiceProvider {
           };
           let j=0;
           while(i < this.caldata.length && (j==0||this.caldata[i-1]["SUMMARY"] == this.caldata[i]["SUMMARY"])){
-            console.log(i+" "+j+":"+this.caldata[i]["SUMMARY"]);
+            //console.log(i+" "+j+":"+this.caldata[i]["SUMMARY"]);
             this.lectureList[this.lectureList.length-1]['dates'][j] = {
               'start': this.caldata[i]["DTSTART;TZID=Asia/Tokyo"],
               'end': this.caldata[i]["DTEND;TZID=Asia/Tokyo"]
