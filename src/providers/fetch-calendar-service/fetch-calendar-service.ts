@@ -67,6 +67,7 @@ export class FetchCalendarServiceProvider {
         currentValue = line.substr(splitAt + 1);
 
         switch (currentKey) {
+          // TODO: もっと一般化されたフォーマットでも使えるようにする
           case "BEGIN":
             parents.push(parentObj);
             parentObj = currentObj;
@@ -83,8 +84,8 @@ export class FetchCalendarServiceProvider {
             break;
           case "LOCATION":
           case "LAST-MODIFIED":
-          case "DTSTART":
-          case "DTEND":
+          case "DTSTART;TZID=Asia/Tokyo":
+          case "DTEND;TZID=Asia/Tokyo":
           case "DTSTAMP":
           case "UID":
           case "SUMMARY":
