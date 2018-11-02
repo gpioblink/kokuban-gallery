@@ -9,32 +9,47 @@ import { Injectable } from '@angular/core';
 */
 @Injectable()
 export class FetchCalendarServiceProvider {
+  public caldata:string[];
 
   constructor(public http: HttpClient) {
     console.log('Hello FetchCalendarServiceProvider Provider');
+    //会津大学のサイトから授業情報を持ってくる
+    // TODO:　自分のiCal形式のカレンダーを自由に登録できるようにする　
+    http.get<U>("https://powerful-wave-23015.herokuapp.com/https://csweb.u-aizu.ac.jp/calendar/882f86382b909d70cb21825f2e737c69fe7370e6-J.ics",
+      {responseType: 'text'})
+      .subscribe(data => {
+          this.caldata =FetchCalendarServiceProvider.convert(data);
+          // TODO: nameをキーとして重複無しで取り出す
+
+          // TODO: {name, datetime[]} という感じのリストを作る
+        }
+      );
+
   }
 
 
   //Ical2Jsonの移植スクリプト
 
   static readonly NEW_LINE: RegExp = /\r\n|\n|\r/;
+
   /**
    * Take ical string data and convert to JSON
    *
-   * @param {string} source
    * @returns {Object}
+   * @param source sourceUrl
    */
   static convert(source :string) {
     let currentKey:string = "",
       currentValue:string = "",
       //objectNames:string[] = [],
-      output = {},
-      parentObj = {},
-      lines = source.split(FetchCalendarServiceProvider.NEW_LINE),
+      output:string[] = {},
+      parentObj:string[] = {},
+      lines:string[] = source.split(FetchCalendarServiceProvider.NEW_LINE),
       splitAt;
-
+    console.log(lines);
     let currentObj = output;
     let parents = [];
+
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
@@ -66,7 +81,14 @@ export class FetchCalendarServiceProvider {
             currentObj = parentObj;
             parentObj = parents.pop();
             break;
-          default:
+          case "LOCATION":
+          case "LAST-MODIFIED":
+          case "DTSTART":
+          case "DTEND":
+          case "DTSTAMP":
+          case "UID":
+          case "SUMMARY":
+          //default:
             if(currentObj[currentKey]) {
               if(!Array.isArray(currentObj[currentKey])) {
                 currentObj[currentKey] = [currentObj[currentKey]];
