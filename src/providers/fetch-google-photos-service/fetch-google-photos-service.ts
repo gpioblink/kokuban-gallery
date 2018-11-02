@@ -17,10 +17,23 @@ import {Observable} from "rxjs";
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
 */
+
+
 @Injectable()
 export class FetchGooglePhotosServiceProvider {
   private readonly API_URL = 'https://photoslibrary.googleapis.com/v1/mediaItems:search';
-  public result: any;
+  public allPhotos: Array<{
+    'date': Date,
+    'srcUrl': string,
+    'refUrl': string
+  }> = [];
+  public selectedPhotos: Array<{
+    'date': Date,
+    'srcUrl': string,
+    'refUrl': string
+  }> = [];
+  public nextPageToken: string;
+  public reachLastPage: boolean = false;
 
   constructor(public http: HttpClient, public gapiService: GoogleApiService, public gAuth: GoogleAuthServiceProvider, private httpClient: HttpClient) {
     console.log('Hello FetchGooglePhotosServiceProvider Provider');
@@ -31,20 +44,47 @@ export class FetchGooglePhotosServiceProvider {
   }
 
   //全ての画像を取得
-  public getAllPhotos(){
-    this.result = this.httpClient.post(this.API_URL , {
+  public getAllPhotos():void{
+    this.httpClient.post(this.API_URL , {
       "filters": {
         "mediaTypeFilter": {
           "mediaTypes": ["PHOTO"]
         }
-      }
+      },
+      "pageToken": this.nextPageToken
     },{
       headers: new HttpHeaders({
         Authorization: `Bearer ${this.gAuth.getToken()}`
       })
     }).subscribe(data => {
-      this.result = data;
-      console.log(this.result);
+      console.log(data);
+      // TODO: 一度読み込んだらストレージにキャッシュして高速化
+      if (this.reachLastPage == false && data.nextPageToken && data.mediaItems) {
+        this.nextPageToken = data.nextPageToken;
+        //console.log("go to token : " + data.nextPageToken);
+        for(let i=0; i<data.mediaItems.length; i++){
+          this.allPhotos.push({
+            date: new Date(data.mediaItems[i].mediaMetadata.creationTime),
+            srcUrl: data.mediaItems[i].baseUrl,
+            refUrl: data.mediaItems[i].productUrl,
+          });
+        }
+        this.getAllPhotos(data.nextPageToken);
+      } else {
+        console.log("no page left");
+        this.reachLastPage = true;
+      }
+    });
+  }
+
+  public selectPhotos(selectDates){
+    this.allPhotos.filter(elem => {
+      for(let i=0; i<selectDates.length; i++){
+        if(selectDates[i].start.getTime()<elem.date.getTime()&&elem.date.getTime()<selectDates[i].end.getTime()){
+          return true;
+        }
+      }
+      return false;
     });
   }
 

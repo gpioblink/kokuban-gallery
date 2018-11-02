@@ -49,7 +49,7 @@ export class FetchCalendarServiceProvider {
           return 0;
         });
 
-        console.log(this.caldata);
+        console.log(this.lectureList);
 
         //{name, datetime[]} という感じのリストを作る
         for(let i = 0; i < this.caldata.length;){
@@ -64,17 +64,24 @@ export class FetchCalendarServiceProvider {
           while(i < this.caldata.length && (j==0||this.caldata[i-1]["SUMMARY"] == this.caldata[i]["SUMMARY"])){
             //console.log(i+" "+j+":"+this.caldata[i]["SUMMARY"]);
             this.lectureList[this.lectureList.length-1]['dates'][j] = {
-              'start': this.caldata[i]["DTSTART;TZID=Asia/Tokyo"],
-              'end': this.caldata[i]["DTEND;TZID=Asia/Tokyo"]
+              'start': FetchCalendarServiceProvider.dateFormat(this.caldata[i]["DTSTART;TZID=Asia/Tokyo"]),
+              'end': FetchCalendarServiceProvider.dateFormat(this.caldata[i]["DTEND;TZID=Asia/Tokyo"])
             };
             i++;j++;
           }
           if(i < this.caldata.length)console.log("Break"+i+" "+j+":"+this.caldata[i]["SUMMARY"]);
         }
+        console.log(this.lectureList);
       });
 
   }
 
+  static dateFormat(str:string):Date{
+    let arr: number[] = (str.substr(0, 4) + '/' + str.substr(4, 2) + '/' + str.substr(6, 2)
+      + '/' + str.substr(9, 2)+ '/' + str.substr(11, 2)+ '/' + str.substr(13, 2))
+      .split('/');
+    return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
+  }
 
   //Ical2Jsonの移植スクリプト
 
