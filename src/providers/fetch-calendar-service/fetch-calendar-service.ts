@@ -7,23 +7,72 @@ import { Injectable } from '@angular/core';
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
 */
+
 @Injectable()
 export class FetchCalendarServiceProvider {
-  public caldata:string[];
+
+  public caldata:Array<{
+    'DTEND;TZID=Asia/Tokyo': string
+    'DTSTAMP': string
+    'DTSTART;TZID=Asia/Tokyo':string
+    'LAST-MODIFIED': string
+    'LOCATION': string
+    'SUMMARY':string
+    'UID': string
+  }>;
+  public lectureList:Array<{
+    'name': string,
+    'location': string,
+    'dates': Array<{
+
+    }>
+  }> = [];
 
   constructor(public http: HttpClient) {
     console.log('Hello FetchCalendarServiceProvider Provider');
     //会津大学のサイトから授業情報を持ってくる
     // TODO:　自分のiCal形式のカレンダーを自由に登録できるようにする　
-    http.get<U>("https://powerful-wave-23015.herokuapp.com/https://csweb.u-aizu.ac.jp/calendar/882f86382b909d70cb21825f2e737c69fe7370e6-J.ics",
+    http.get("https://powerful-wave-23015.herokuapp.com/https://csweb.u-aizu.ac.jp/calendar/882f86382b909d70cb21825f2e737c69fe7370e6-J.ics",
       {responseType: 'text'})
       .subscribe(data => {
-          this.caldata =FetchCalendarServiceProvider.convert(data);
-          // TODO: nameをキーとして重複無しで取り出す
+        this.caldata = FetchCalendarServiceProvider.convert(data)["VCALENDAR"][0]["VEVENT"];
+        // TODO: nameをキーとして重複無しで取り出す
+        /*let lectures = this.caldata.filter((v1,i1,a1) => {
+          return (a1.findIndex(v2 => {
+            return (v1.SUMMARY===v2.SUMMARY)
+          }) === i1);
+        });*/
 
-          // TODO: {name, datetime[]} という感じのリストを作る
+        this.caldata.sort((a, b) => {
+          if (a['SUMMARY'] < b['SUMMARY']) return -1;
+          if (a['SUMMARY'] > b['SUMMARY']) return 1;
+          return 0;
+        });
+
+        console.log(this.caldata);
+
+
+        // TODO: {name, datetime[]} という感じのリストを作る
+        for(let i = 0; i < this.caldata.length;){
+          //console.log(this.caldata[i]);
+
+          this.lectureList[this.lectureList.length]  = {
+            'name': this.caldata[i]["SUMMARY"],
+            'location': this.caldata[i]["LOCATION"],
+            'dates': []
+          };
+          let j=0;
+          while(i < this.caldata.length && (j==0||this.caldata[i-1]["SUMMARY"] == this.caldata[i]["SUMMARY"])){
+            console.log(i+" "+j+":"+this.caldata[i]["SUMMARY"]);
+            this.lectureList[this.lectureList.length-1]['dates'][j] = {
+              'start': this.caldata[i]["DTSTART;TZID=Asia/Tokyo"],
+              'end': this.caldata[i]["DTEND;TZID=Asia/Tokyo"]
+            };
+            i++;j++;
+          }
+          if(i < this.caldata.length)console.log("Break"+i+" "+j+":"+this.caldata[i]["SUMMARY"]);
         }
-      );
+      });
 
   }
 
@@ -42,12 +91,11 @@ export class FetchCalendarServiceProvider {
     let currentKey:string = "",
       currentValue:string = "",
       //objectNames:string[] = [],
-      output:string[] = {},
-      parentObj:string[] = {},
+      output:string[] = [],
+      parentObj:string[] = [],
       lines:string[] = source.split(FetchCalendarServiceProvider.NEW_LINE),
       splitAt;
-    console.log(lines);
-    let currentObj = output;
+    let currentObj: any = output;
     let parents = [];
 
 
@@ -74,6 +122,7 @@ export class FetchCalendarServiceProvider {
             if (parentObj[currentValue] == null) {
               parentObj[currentValue] = [];
             }
+
             // Create a new object, store the reference for future uses
             currentObj = {};
             parentObj[currentValue].push(currentObj);
