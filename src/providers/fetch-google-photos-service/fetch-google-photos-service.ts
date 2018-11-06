@@ -88,14 +88,18 @@ export class FetchGooglePhotosServiceProvider {
   }
 
   public selectPhotos(selectDates){
-    this.allPhotos.filter(elem => {
+    this.selectedPhotos = this.allPhotos.filter(elem => {
+      // TODO: ２分木かなんかで高速化
       for(let i=0; i<selectDates.length; i++){
+        if(i<5)console.log(selectDates[i].start.toLocaleString()+" "+elem.date.toLocaleString()+" "+selectDates[i].end.toLocaleString());
         if(selectDates[i].start.getTime()<elem.date.getTime()&&elem.date.getTime()<selectDates[i].end.getTime()){
+          console.log("OK!");
           return true;
         }
       }
       return false;
     });
+
   }
 
 }

@@ -13,6 +13,5 @@ export class HomePage {
               private fetchCal: FetchCalendarServiceProvider,
               public fetchPhotos: FetchGooglePhotosServiceProvider
   ) {
-    console.log(fetchCal.aaaaa);
   }
 }
