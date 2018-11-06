@@ -24,7 +24,8 @@ export class FetchCalendarServiceProvider {
     'name': string,
     'location': string,
     'dates': Array<{
-
+      'start':Date,
+        'end': Date
     }>
   }> = [];
 
@@ -71,6 +72,13 @@ export class FetchCalendarServiceProvider {
           }
           if(i < this.caldata.length)console.log("Break"+i+" "+j+":"+this.caldata[i]["SUMMARY"]);
         }
+        for(let i = 0; i < this.lectureList.length;i++) {
+            this.lectureList[i].dates.sort(function (a, b) {
+                if (a.start.getTime() < b.start.getTime()) return -1;
+                if (a.start.getTime() > b.start.getTime()) return 1;
+                return 0;
+            });
+        }
         console.log(this.lectureList);
       });
 
@@ -87,7 +95,6 @@ export class FetchCalendarServiceProvider {
 
   static readonly NEW_LINE: RegExp = /\r\n|\n|\r/;
 
-  public aaaaa:string = "OK! Why????";
 
   /**
    * Take ical string data and convert to JSON
