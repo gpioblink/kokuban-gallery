@@ -77,10 +77,10 @@ export class FetchCalendarServiceProvider {
   }
 
   static dateFormat(str:string):Date{
-    let arr: number[] = (str.substr(0, 4) + '/' + str.substr(4, 2) + '/' + str.substr(6, 2)
+    let arr: string[] = (str.substr(0, 4) + '/' + str.substr(4, 2) + '/' + str.substr(6, 2)
       + '/' + str.substr(9, 2)+ '/' + str.substr(11, 2)+ '/' + str.substr(13, 2))
       .split('/');
-    return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
+    return new Date(Number(arr[0]), Number(arr[1]) - 1, Number(arr[2]), Number(arr[3]), Number(arr[4]), Number(arr[5]));
   }
 
   //Ical2Jsonの移植スクリプト

@@ -18,6 +18,16 @@ import {Observable} from "rxjs";
   and Angular DI.
 */
 
+interface gReturns {
+    nextPageToken: string,
+    mediaItems: Array<{
+        baseUrl: string,
+        productUrl: string
+        mediaMetadata: {
+            creationTime: string
+        }
+    }>
+}
 
 @Injectable()
 export class FetchGooglePhotosServiceProvider {
@@ -45,7 +55,7 @@ export class FetchGooglePhotosServiceProvider {
 
   //全ての画像を取得
   public getAllPhotos():void{
-    this.httpClient.post(this.API_URL , {
+    this.httpClient.post<gReturns>(this.API_URL , {
       "filters": {
         "mediaTypeFilter": {
           "mediaTypes": ["PHOTO"]
@@ -69,7 +79,7 @@ export class FetchGooglePhotosServiceProvider {
             refUrl: data.mediaItems[i].productUrl,
           });
         }
-        this.getAllPhotos(data.nextPageToken);
+        this.getAllPhotos();
       } else {
         console.log("no page left");
         this.reachLastPage = true;
