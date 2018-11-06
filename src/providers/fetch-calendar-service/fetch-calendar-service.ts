@@ -87,6 +87,8 @@ export class FetchCalendarServiceProvider {
 
   static readonly NEW_LINE: RegExp = /\r\n|\n|\r/;
 
+  public aaaaa:string = "OK! Why????";
+
   /**
    * Take ical string data and convert to JSON
    *
