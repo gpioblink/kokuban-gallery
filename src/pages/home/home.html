@@ -28,7 +28,7 @@
   </p>
   -->
   <ion-list>
-    <ion-item *ngFor="let lec of fetchCal.lectureList" [navPush]="'PhotoListPage'" [navParams]="{'name': lec.name, 'location': lec.location,
+    <ion-item *ngFor="let lec of fetchCal.lectureList" [navPush]="'ListPhotosSelectedByTheLecturePage'" [navParams]="{'name': lec.name, 'location': lec.location,
     'dates': lec.dates}">
       {{lec.name}}
     </ion-item>

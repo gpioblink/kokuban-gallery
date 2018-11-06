@@ -1,25 +1,36 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {FetchGooglePhotosServiceProvider} from "../../providers/fetch-google-photos-service/fetch-google-photos-service";
 
-/**
- * Generated class for the ListPhotosSelectedByTheLecturePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
+@IonicPage( {name: "ListPhotosSelectedByTheLecturePage", segment: 'show/:name', defaultHistory: ['Home']})
 @Component({
-  selector: 'page-list-photos-selected-by-the-lecture',
-  templateUrl: 'list-photos-selected-by-the-lecture.html',
+    selector: 'page-list-photos-selected-by-the-lecture',
+    templateUrl: 'list-photos-selected-by-the-lecture.html',
 })
+
 export class ListPhotosSelectedByTheLecturePage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ListPhotosSelectedByTheLecturePage');
-  }
+    photos: {} = {};
+
+    title: string = "授業ビュー";
+    location: string = "場所";
+
+
+    constructor(public navCtrl: NavController, public navParams: NavParams,
+                //private ngZone: NgZone, public httpClient: HttpClient,
+                //public loadingCtl: LoadingController,
+                public fetchPhotos: FetchGooglePhotosServiceProvider) {
+        console.log('ionViewDidLoad ListPhotosSelectedByTheLecturePage');
+    }
+
+    ionViewDidLoad() {
+        this.title = this.navParams.get("name");
+        this.location = this.navParams.get("location");
+        //let loading = this.loadingCtl.create({content: "お待ちください..\nこの処理には最大で3分かかります"});
+        //loading.present();
+        this.fetchPhotos.selectPhotos(this.navParams.get("dates"));
+        this.photos = this.fetchPhotos.selectedPhotos;
+    }
 
 }
