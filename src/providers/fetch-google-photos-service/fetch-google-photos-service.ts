@@ -35,6 +35,7 @@ export class FetchGooglePhotosServiceProvider {
   public allPhotos: Array<{
     'date': Date,
     'srcUrl': string,
+    'graUrl': string,
     'refUrl': string
   }> = [];
   public selectedPhotos: Array<{
@@ -77,6 +78,7 @@ export class FetchGooglePhotosServiceProvider {
             date: new Date(data.mediaItems[i].mediaMetadata.creationTime),
             srcUrl: data.mediaItems[i].baseUrl,
             refUrl: data.mediaItems[i].productUrl,
+            graUrl: data.mediaItems[i].baseUrl
           });
         }
         this.getAllPhotos();

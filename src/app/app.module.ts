@@ -18,6 +18,7 @@ import {
   GoogleApiConfig
 } from "ng-gapi";
 import { GoogleAuthServiceProvider } from '../providers/google-auth-service/google-auth-service';
+import { IonicImageViewerModule } from 'ionic-img-viewer';
 
 let gapiClientConfig: NgGapiClientConfig = {
   client_id: "250849318613-dabn85udvsa1htc3c5geigmndccmdluq.apps.googleusercontent.com",

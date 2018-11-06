@@ -11,7 +11,11 @@ import {FetchGooglePhotosServiceProvider} from "../../providers/fetch-google-pho
 export class ListPhotosSelectedByTheLecturePage {
 
 
-    photos: {} = {};
+    photos: Array<{
+        'date': Date,
+        'srcUrl': string,
+        'refUrl': string
+    }> = [];
 
     title: string = "授業ビュー";
     location: string = "場所";

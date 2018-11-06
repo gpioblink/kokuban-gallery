@@ -1,12 +1,19 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{title}}({{location}})</ion-title>
+    <ion-title>{{title}} ({{location}})</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <pre>{{photos|json}}</pre>
+  <!--<pre>{{photos|json}}</pre>-->
+
+  <div class="images">
+    <div class="one-image" *ngFor="let image of photos">
+      <img [src]="image.srcUrl" imageViewer>
+    </div>
+  </div>
+
 </ion-content>
