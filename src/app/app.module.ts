@@ -40,7 +40,8 @@ let gapiClientConfig: NgGapiClientConfig = {
     GoogleApiModule.forRoot({
       provide: NG_GAPI_CONFIG,
       useValue: gapiClientConfig
-    })
+    }),
+    IonicImageViewerModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
