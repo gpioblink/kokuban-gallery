@@ -33,7 +33,12 @@ export class FetchCalendarServiceProvider {
     console.log('Hello FetchCalendarServiceProvider Provider');
     //会津大学のサイトから授業情報を持ってくる
     // TODO:　自分のiCal形式のカレンダーを自由に登録できるようにする　
-    http.get("https://powerful-wave-23015.herokuapp.com/https://csweb.u-aizu.ac.jp/calendar/882f86382b909d70cb21825f2e737c69fe7370e6-J.ics",
+    let calUrl:string = sessionStorage.getItem('calUrl');
+    if (typeof calUrl !== "string" ||!(calUrl.startsWith("http://")&&calUrl.startsWith("https://"))) {
+      sessionStorage.setItem('calUrl', "https://powerful-wave-23015.herokuapp.com/https://csweb.u-aizu.ac.jp/calendar/882f86382b909d70cb21825f2e737c69fe7370e6-J.ics");
+    }
+    calUrl = sessionStorage.getItem('calUrl');
+    http.get(calUrl,
       {responseType: 'text'})
       .subscribe(data => {
         this.caldata = FetchCalendarServiceProvider.convert(data)["VCALENDAR"][0]["VEVENT"];
@@ -53,31 +58,32 @@ export class FetchCalendarServiceProvider {
         console.log(this.lectureList);
 
         //{name, datetime[]} という感じのリストを作る
-        for(let i = 0; i < this.caldata.length;){
+        for (let i = 0; i < this.caldata.length;) {
           //console.log(this.caldata[i]);
 
-          this.lectureList[this.lectureList.length]  = {
+          this.lectureList[this.lectureList.length] = {
             'name': this.caldata[i]["SUMMARY"],
             'location': this.caldata[i]["LOCATION"],
             'dates': []
           };
-          let j=0;
-          while(i < this.caldata.length && (j==0||this.caldata[i-1]["SUMMARY"] == this.caldata[i]["SUMMARY"])){
+          let j = 0;
+          while (i < this.caldata.length && (j == 0 || this.caldata[i - 1]["SUMMARY"] == this.caldata[i]["SUMMARY"])) {
             //console.log(i+" "+j+":"+this.caldata[i]["SUMMARY"]);
-            this.lectureList[this.lectureList.length-1]['dates'][j] = {
+            this.lectureList[this.lectureList.length - 1]['dates'][j] = {
               'start': FetchCalendarServiceProvider.dateFormat(this.caldata[i]["DTSTART;TZID=Asia/Tokyo"]),
               'end': FetchCalendarServiceProvider.dateFormat(this.caldata[i]["DTEND;TZID=Asia/Tokyo"])
             };
-            i++;j++;
+            i++;
+            j++;
           }
-          if(i < this.caldata.length)console.log("Break"+i+" "+j+":"+this.caldata[i]["SUMMARY"]);
+          if (i < this.caldata.length) console.log("Break" + i + " " + j + ":" + this.caldata[i]["SUMMARY"]);
         }
-        for(let i = 0; i < this.lectureList.length;i++) {
-            this.lectureList[i].dates.sort(function (a, b) {
-                if (a.start.getTime() < b.start.getTime()) return -1;
-                if (a.start.getTime() > b.start.getTime()) return 1;
-                return 0;
-            });
+        for (let i = 0; i < this.lectureList.length; i++) {
+          this.lectureList[i].dates.sort(function (a, b) {
+            if (a.start.getTime() < b.start.getTime()) return -1;
+            if (a.start.getTime() > b.start.getTime()) return 1;
+            return 0;
+          });
         }
         console.log(this.lectureList);
       });

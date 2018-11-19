@@ -10,6 +10,10 @@ import {
 } from "ng-gapi";
 import {GoogleAuthServiceProvider} from "../google-auth-service/google-auth-service";
 import {Observable} from "rxjs";
+import {NavController} from "ionic-angular";
+import {LoginPage} from "../../pages/login/login";
+import {e} from "@angular/core/src/render3";
+import {asTextData} from "@angular/core/src/view";
 
 /*
   Generated class for the FetchGooglePhotosServiceProvider provider.
@@ -45,17 +49,34 @@ export class FetchGooglePhotosServiceProvider {
   }> = [];
   public nextPageToken: string;
   public reachLastPage: boolean = false;
+  public navCntl: NavController;
 
   constructor(public http: HttpClient, public gapiService: GoogleApiService, public gAuth: GoogleAuthServiceProvider, private httpClient: HttpClient) {
     console.log('Hello FetchGooglePhotosServiceProvider Provider');
     this.gapiService.onLoad().subscribe();
-    this.gAuth.signIn();
-    // TODO: まだ認証していない時は認証ページに誘導する
+  }
+
+  public photoGetter(navCntl :NavController) :void{
+    this.navCntl = navCntl;
+    try{
+      this.gAuth.signIn(this.navCntl);
+    }catch{
+      // まだ認証していない時は認証ページに誘導する
+      if(typeof this.navCntl !== "undefined") this.navCntl.push('LoginPage');
+    }
     this.getAllPhotos();
   }
 
   //全ての画像を取得
   public getAllPhotos():void{
+    let tdata: string;
+    try {
+      tdata = this.gAuth.getToken();
+    }catch{
+      // まだ認証していない時は認証ページに誘導する
+      console.log(typeof this.navCntl);
+      if(typeof this.navCntl !== "undefined") this.navCntl.push('LoginPage');
+    }
     this.httpClient.post<gReturns>(this.API_URL , {
       "filters": {
         "mediaTypeFilter": {
@@ -65,7 +86,7 @@ export class FetchGooglePhotosServiceProvider {
       "pageToken": this.nextPageToken
     },{
       headers: new HttpHeaders({
-        Authorization: `Bearer ${this.gAuth.getToken()}`
+        Authorization: `Bearer ${tdata}`
       })
     }).subscribe(data => {
       console.log(data);

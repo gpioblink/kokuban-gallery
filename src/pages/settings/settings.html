@@ -1,0 +1,29 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>黒板ギャラリーの設定</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <form #form="ngForm" (ngSubmit)="logForm(form)" novalidate>
+    <ion-item>
+      <ion-label>授業カレンダのURL</ion-label>
+      <ion-input type="text" required [(ngModel)]="todo.title" ngControl="title" name="title"></ion-input>
+    </ion-item>
+   <!-- <ion-item>
+      <ion-label>Googleの設定</ion-label>
+      <button ion-button round outline>Googleアカウントをアプリと紐付ける</button>
+    </ion-item>-->
+    <button ion-button type="submit" block>反映</button>
+  </form>
+
+  <!-- TODO:授業時間の前後調節機能 -->
+  <!--ion-item>
+    <ion-label>授業終了後5分間を授業時間に含める</ion-label>
+    <ion-toggle></ion-toggle>
+  </ion-item>-->
+
+</ion-content>

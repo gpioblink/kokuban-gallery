@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {IonicPage, MenuController, NavController, NavParams, Platform} from 'ionic-angular';
 import {Slide} from "./welcome-slides.module";
+import { HomePage } from "../home/home";
 
 /**
  * Generated class for the WelcomeSlidesPage page.
@@ -46,10 +47,11 @@ export class WelcomeSlidesPage {
   }
 
   startApp() {
-    this.navCtrl.setRoot('WelcomePage', {}, {
-      animate: true,
-      direction: 'forward'
-    });
+    // this.navCtrl.setRoot('HomePage', {}, {
+    //   animate: true,
+    //   direction: 'forward'
+    // });
+    this.navCtrl.pop();
   }
 
   onSlideChangeStart(slider) {
